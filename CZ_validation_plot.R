@@ -5,7 +5,7 @@ library("maptools")
 library("wesanderson")
 #load the coastlines data by readOGR function from sp package
 coastlines <- readOGR("/lfs/home/ychen/GIS/Coastline/ne_110m_coastline/ne_110m_coastline.shp")
-
+library("sp")
 # load the function 
 library("raster")
 source("./src_function_ncdf4.R")
@@ -288,4 +288,44 @@ legend("bottomright",legend=leg.txt,
 
 abline(a=0,b=1,lty="dashed") 
 dev.off()
+
+
+library("irr")
+df<- data.frame(taiesm=as.vector(ez.tai), megzter=as.vector(ez.met)) 
+
+df<-df[complete.cases(df),]
+
+all<-kappa2(df)
+
+print(all)
+
+
+df_ez1<-subset(df,(df$taiesm==1)|(df$taiesm==2))
+ez1<-kappa2(df_ez1)
+print(paste("ez1:",ez1))
+
+
+df_ez2<-subset(df,(df$taiesm==2)|(df$taiesm==3))
+ez2<-kappa2(df_ez2)
+print(paste("ez2:",ez2))
+
+
+df_ez3<-subset(df,(df$taiesm==3)|(df$taiesm==4))
+ez3<-kappa2(df_ez3)
+print(paste("ez3:",ez3))
+
+
+df_ez4<-subset(df,(df$taiesm==4)|(df$taiesm==5))
+ez4<-kappa2(df_ez4)
+print(paste("ez4:",ez4))
+
+
+df_ez5<-subset(df,(df$taiesm==5)|(df$taiesm==6))
+ez5<-kappa2(df_ez5)
+print(paste("ez5:",ez5))
+
+df_ez6<-subset(df,(df$taiesm==6)|(df$taiesm==1))
+ez6<-kappa2(df_ez6)
+print(paste("ez6:",ez6))
+
 
