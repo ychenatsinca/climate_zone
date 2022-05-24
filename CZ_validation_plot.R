@@ -291,13 +291,44 @@ dev.off()
 
 
 library("irr")
-df<- data.frame(taiesm=as.vector(ez.tai), megzter=as.vector(ez.met)) 
+df<- data.frame(taiesm=as.vector(ez.tai), metzger=as.vector(ez.met)) 
 
 df<-df[complete.cases(df),]
 
 all<-kappa2(df)
 
 print(all)
+
+
+k.table <- data.frame(matrix(ncol = 6, nrow = 6))
+colnames(k.table) <- c("Ext.cold","Cold","Cool","Warm","Hot","Ext.hot")
+rownames(k.table) <- c("Ext.cold.t","Cold.t","Cool.t","Warm.t","Hot.t","Ext.hot.t")
+#
+# craete the kappa table
+
+for (j in 1:6) {
+  for (i in 1:6) {
+   tmp <- subset(df, (df$metzger==i) & (df$taiesm==j)) 
+   print( paste("I:",i,"J:",j,"Obs.No.:",nrow(tmp),sep=""))
+   if (i==1) k.table$Ext.cold[j] <- nrow(tmp)
+   if (i==2) k.table$Cold[j] <- nrow(tmp)
+   if (i==3) k.table$Cool[j] <- nrow(tmp)
+   if (i==4) k.table$Warm[j] <- nrow(tmp)
+   if (i==5) k.table$Hot[j] <- nrow(tmp)
+   if (i==6) k.table$Ext.hot[j] <- nrow(tmp)
+   } 
+#  tmp <- data.frame(Ext.cold= k.table$Ext.cold[j],Cold=k.table$Cold[j],
+#        Cool=k.table$Cool[j],Warm=k.table$Warm[j],Hot=k.table$Hot[j],Ext.hot=k.table$Ext.hot[j])
+#  k.table <- rbind(tmp,k.table)
+
+}
+
+
+#library("stats")
+# get chisq test value 
+
+chi_test_value  <- chisq.test(k.table)
+print(chi_test_value) 
 
 
 df_ez1<-subset(df,(df$taiesm==1)|(df$taiesm==2))
