@@ -80,6 +80,12 @@ cz_taiesm <-  fun_read_nc("TaiESM1_historical_r1i1p_climate_zone.nc")
 #cz_m <- cz_m_arr[,,1]
 #cz_t <- cz_t_arr[,,1]
 
+#load area information 
+area <- as.matrix(raster("../mask/area.nc", varname="AREA"))
+land_area <- area/1000000.
+#convert to 1000000 km^2
+land_area <- t(land_area)
+
 
 mask    <- fun_read_nc("../mask/land_frac.nc")
 # land mask manipulation
@@ -275,12 +281,23 @@ dev.off()
 
 pdf (file="TaiESM1_Metzger_GDD_Zone_scater_plot.pdf",  width =6, height = 6) 
 
+xy.table <- data.frame()
+for (i in 1:6) {
+
+ tmp.a <- sum(land_area[as.integer(ez.tai)== as.integer(i)],na.rm=T) 
+ tmp.b <- sum(land_area[as.integer(ez.met)== as.integer(i)],na.rm=T)
+ tmp.c <- as.integer(i)
+ tmp.table <- data.frame(taiesm=tmp.a, metzger=tmp.b, zone=tmp.c)
+ xy.table <- rbind(tmp.table,xy.table)
+} 
+
 # state
-df <- data.frame(taiesm=summary(as.factor(ez.tai))[1:6], metzger=summary(as.factor(ez.met))[1:6],zone=seq(1:6))
+#df <- data.frame(taiesm=summary(as.factor(ez.tai))[1:6], metzger=summary(as.factor(ez.met))[1:6],zone=seq(1:6))
+df <- xy.table
 
 plot(df$taiesm ~ df$metzger, cex=2.5, pch= 22, col=rep("black",6),bg=ez.color, 
-xlab="Extend of GDD zone, TaiESM1 simulated (grids)",
-ylab="Extend of GDD zone, Metzger Statra Estimated (grids)", xlim=c(0,5000),ylim=c(0,5000))
+xlab="Extend of GDD zone, TaiESM1 simulated (10^6 km^2)",
+ylab="Extend of GDD zone, Metzger Statra Estimated (10^6 km^2)", xlim=c(0,70),ylim=c(0,70))
 
 legend("bottomright",legend=leg.txt,
 , fill = ez.color, cex=1.0)
